@@ -1,4 +1,4 @@
-﻿# 馃幃 Sekai 2048 路 鍘熷垱瑙掕壊鍚堟垚娓告垙
+# 馃幃 Sekai 2048 路 鍘熷垱瑙掕壊鍚堟垚娓告垙
 
 > **鍘熷垱瑙掕壊 2048锛氬悎鎴愬崌绾?路 鎺掕姒?路 VIP 璁㈤槄 路 AI 鏁欑粌**
 > Original-character 2048: merge, leaderboard, VIP subscriptions & AI coach
@@ -89,7 +89,7 @@ $env:SEKAI_SPONSOR_CHECKOUT_URL="https://example.com/sponsor"
 
 
 <p align="center">
-  <img src="screenshots/demo.gif" alt="Demo" width="720"/>
+  <img src="screenshots/demo.webp" alt="Demo" width="720"/>
 </p>
 ---
 
