@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai 2048 - 登录</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}" href="/css/auth.css">
+</head>
+<body>
+<main class="auth-page">
+    <section class="brand-panel">
+        <p class="eyebrow">Original Character Puzzle</p>
+        <h1>Sekai 2048</h1>
+        <p>把相同角色方块合成升级，冲到 2048，留下你的最高分。</p>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            <div class="card-head">
+                <span>2048</span>
+                <h2>欢迎回来</h2>
+                <p>登录后开始角色合成挑战</p>
+            </div>
+
+            <div class="server-message success" th:if="${message}" th:text="${message}"></div>
+            <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+
+            <form th:action="@{/user/login}" action="/user/login" method="post">
+                <label>
+                    <span>用户名</span>
+                    <input type="text" name="userName" placeholder="请输入用户名或昵称" autocomplete="username" required>
+                </label>
+                <label>
+                    <span>密码</span>
+                    <input type="password" name="password" placeholder="请输入密码" autocomplete="current-password" required>
+                </label>
+                <button class="primary-btn" type="submit">登录</button>
+                <a class="ghost-btn" th:href="@{/register}" href="/register">创建新账号</a>
+            </form>
+            <p class="legal-links">
+                登录即代表同意
+                <a th:href="@{/terms}" href="/terms">服务条款</a>
+                和
+                <a th:href="@{/privacy}" href="/privacy">隐私政策</a>
+            </p>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+</body>
+</html>

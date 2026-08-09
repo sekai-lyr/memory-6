@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>排行榜 - Sekai 2048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+    <script th:if="${adsEnabled}" async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+            th:src="'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ${adsClient}"
+            crossorigin="anonymous"></script>
+</head>
+<body th:attr="data-vip=${loginUser.vipActive}">
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="logo" th:href="@{/home}" href="/home"><span>2048</span><strong>Sekai 2048</strong></a>
+        <nav>
+            <a th:href="@{/home}" href="/home">开始游戏</a>
+            <a class="active" th:href="@{/leaderboard}" href="/leaderboard">排行榜</a>
+            <a th:href="@{/store}" href="/store">商店</a>
+            <a th:href="@{/terms}" href="/terms">服务条款</a>
+            <a th:href="@{/privacy}" href="/privacy">隐私政策</a>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Ranking</p>
+                <h1>全站排行榜</h1>
+            </div>
+        </header>
+        <section class="leaderboard-table">
+            <article th:each="record, stat : ${leaderboard}">
+                <span class="rank" th:text="${stat.index + 1}">1</span>
+                <div>
+                    <strong>
+                        <span th:text="${record.nickName}">Player</span>
+                        <small class="vip-badge mini" th:if="${record.vipActive}">VIP</small>
+                    </strong>
+                    <p th:text="${record.maxCharacter} + ' · 最大方块 ' + ${record.maxTile}">Character</p>
+                </div>
+                <b th:text="${record.score}">0</b>
+            </article>
+            <p class="muted" th:if="${#lists.isEmpty(leaderboard)}">暂时还没有成绩。</p>
+        </section>
+        <section class="ad-card leaderboard-ad" th:if="${adsEnabled and !loginUser.vipActive}">
+            <p class="eyebrow">Sponsored</p>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client=""
+                 data-ad-slot=""
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"
+                 th:attr="data-ad-client=${adsClient},data-ad-slot=${adsSlot}"></ins>
+        </section>
+    </main>
+</div>
+<script th:if="${adsEnabled}">(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</body>
+</html>

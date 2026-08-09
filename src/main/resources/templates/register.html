@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai 2048 - 注册</title>
+    <link rel="stylesheet" th:href="@{/css/auth.css}" href="/css/auth.css">
+</head>
+<body>
+<main class="auth-page register-page">
+    <section class="brand-panel">
+        <p class="eyebrow">New Player</p>
+        <h1>Sekai 2048</h1>
+        <p>注册后保存最高分、最大角色方块和每一局游戏记录。</p>
+    </section>
+
+    <section class="auth-panel">
+        <div class="auth-card">
+            <div class="card-head">
+                <span>JOIN</span>
+                <h2>创建账号</h2>
+                <p>开始你的角色合成路线</p>
+            </div>
+
+            <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+
+            <form th:action="@{/user/register}" action="/user/register" method="post">
+                <label>
+                    <span>用户名</span>
+                    <input type="text" name="userName" placeholder="例如 sekai_player" autocomplete="username" required>
+                </label>
+                <label>
+                    <span>昵称</span>
+                    <input type="text" name="nickName" placeholder="排行榜显示昵称">
+                </label>
+                <label>
+                    <span>密码</span>
+                    <input type="password" name="password" placeholder="至少 6 位" autocomplete="new-password" required>
+                </label>
+                <label>
+                    <span>确认密码</span>
+                    <input type="password" name="confirmPassword" placeholder="再次输入密码" autocomplete="new-password" required>
+                </label>
+                <button class="primary-btn" type="submit">注册</button>
+                <a class="ghost-btn" th:href="@{/login}" href="/login">已有账号，去登录</a>
+            </form>
+            <p class="legal-links">
+                注册即代表同意
+                <a th:href="@{/terms}" href="/terms">服务条款</a>
+                和
+                <a th:href="@{/privacy}" href="/privacy">隐私政策</a>
+            </p>
+        </div>
+    </section>
+</main>
+<script th:src="@{/js/auth.js}" src="/js/auth.js"></script>
+</body>
+</html>

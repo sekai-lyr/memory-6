@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sekai.game2048.mapper.Sekai2048VipCloudSaveMapper">
+
+    <resultMap id="BaseResultMap" type="com.sekai.game2048.dataobject.Sekai2048VipCloudSaveDO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="slotName" column="slot_name"/>
+        <result property="runData" column="run_data"/>
+        <result property="score" column="score"/>
+        <result property="maxTile" column="max_tile"/>
+        <result property="moveCount" column="move_count"/>
+        <result property="durationSeconds" column="duration_seconds"/>
+        <result property="mode" column="mode"/>
+        <result property="boardSize" column="board_size"/>
+        <result property="targetTile" column="target_tile"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id, user_id, slot_name, run_data, score, max_tile, move_count,
+        duration_seconds, mode, board_size, target_tile, create_time, update_time
+    </sql>
+
+    <insert id="upsert"
+            parameterType="com.sekai.game2048.dataobject.Sekai2048VipCloudSaveDO">
+        INSERT INTO sekai_2048_vip_cloud_save (
+            user_id, slot_name, run_data, score, max_tile, move_count,
+            duration_seconds, mode, board_size, target_tile
+        ) VALUES (
+            #{userId}, #{slotName}, #{runData}, #{score}, #{maxTile}, #{moveCount},
+            #{durationSeconds}, #{mode}, #{boardSize}, #{targetTile}
+        )
+        ON DUPLICATE KEY UPDATE
+            run_data = VALUES(run_data),
+            score = VALUES(score),
+            max_tile = VALUES(max_tile),
+            move_count = VALUES(move_count),
+            duration_seconds = VALUES(duration_seconds),
+            mode = VALUES(mode),
+            board_size = VALUES(board_size),
+            target_tile = VALUES(target_tile),
+            update_time = CURRENT_TIMESTAMP
+    </insert>
+
+    <select id="countByUserId" resultType="long">
+        SELECT COUNT(1)
+        FROM sekai_2048_vip_cloud_save
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectByUserIdAndSlotName" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_vip_cloud_save
+        WHERE user_id = #{userId}
+          AND slot_name = #{slotName}
+        LIMIT 1
+    </select>
+
+    <select id="selectByIdAndUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_vip_cloud_save
+        WHERE id = #{id}
+          AND user_id = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectRecentByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_vip_cloud_save
+        WHERE user_id = #{userId}
+        ORDER BY update_time DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <delete id="deleteByIdAndUserId">
+        DELETE FROM sekai_2048_vip_cloud_save
+        WHERE id = #{id}
+          AND user_id = #{userId}
+    </delete>
+</mapper>

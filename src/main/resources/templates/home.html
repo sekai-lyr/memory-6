@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sekai 2048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+    <script th:if="${adsEnabled}" async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+            th:src="'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ${adsClient}"
+            crossorigin="anonymous"></script>
+</head>
+<body th:attr="data-vip=${loginUser.vipActive}">
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="logo" th:href="@{/home}" href="/home"><span>2048</span><strong>Sekai 2048</strong></a>
+        <nav>
+            <a class="active" th:href="@{/home}" href="/home">游戏</a>
+            <a th:href="@{/leaderboard}" href="/leaderboard">排行榜</a>
+            <a th:href="@{/store}" href="/store">商店</a>
+            <a th:href="@{/terms}" href="/terms">服务条款</a>
+            <a th:href="@{/privacy}" href="/privacy">隐私政策</a>
+        </nav>
+        <form th:action="@{/user/logout}" action="/user/logout" method="post">
+            <button class="text-btn" type="submit">退出登录</button>
+        </form>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">原创角色合成游戏</p>
+                <h1>
+                    <span th:text="'你好，' + ${loginUser.nickName}">你好，玩家</span>
+                    <small class="vip-badge" th:if="${loginUser.vipActive}" th:text="${loginUser.vipLabel}">VIP</small>
+                </h1>
+            </div>
+            <div class="stats">
+                <div><span id="score">0</span><small>当前分数</small></div>
+                <div><span id="bestScore" th:text="${dashboard.bestRecord != null ? dashboard.bestRecord.score : 0}">0</span><small>最高分</small></div>
+                <div><span th:text="${dashboard.playCount}">0</span><small>已保存局数</small></div>
+            </div>
+        </header>
+
+        <section class="game-layout">
+            <div class="game-panel">
+                <div class="game-toolbar">
+                    <div>
+                        <h2>原创角色 2048</h2>
+                        <p id="gameHint">用方向键、WASD 或滑动来移动方块。</p>
+                    </div>
+                    <div class="toolbar-actions">
+                        <select id="modeSelect" aria-label="游戏模式">
+                            <option value="classic">经典模式</option>
+                            <option value="chaos">压力模式</option>
+                            <option value="zen">练习模式</option>
+                            <option value="daily">每日挑战</option>
+                        </select>
+                        <select id="themeSelect" aria-label="主题">
+                            <option value="midnight">深夜主题</option>
+                            <option value="sakura">樱花主题</option>
+                            <option value="arcade">街机主题</option>
+                            <option value="vip" th:if="${loginUser.vipActive}">VIP 金色主题</option>
+                        </select>
+                        <select id="boardSizeSelect" aria-label="棋盘大小">
+                            <option value="4">4 x 4</option>
+                            <option value="5">5 x 5</option>
+                        </select>
+                        <select id="targetTileSelect" aria-label="目标方块">
+                            <option value="1024">目标 1024</option>
+                            <option value="2048" selected>目标 2048</option>
+                            <option value="4096">目标 4096</option>
+                        </select>
+                        <button class="secondary-btn" id="pauseBtn" type="button">暂停</button>
+                        <button class="secondary-btn" id="undoBtn" type="button">撤销</button>
+                        <button class="secondary-btn" id="hintBtn" type="button">提示</button>
+                        <button class="secondary-btn" id="shuffleBtn" type="button">洗牌</button>
+                        <button class="secondary-btn" id="restartBtn" type="button">重开</button>
+                        <button class="primary-btn" id="saveBtn" type="button">保存成绩</button>
+                    </div>
+                </div>
+
+                <div class="battle-stats">
+                    <div><span id="moveCount">0</span><small>步数</small></div>
+                    <div><span id="comboCount">x1</span><small>连击</small></div>
+                    <div><span id="maxTileLabel">2</span><small>最大方块</small></div>
+                    <div><span id="timeLabel">00:00</span><small>用时</small></div>
+                </div>
+
+                <div class="skill-bar">
+                    <button class="skill-btn" id="focusSkillBtn" type="button">
+                        <strong>专注</strong><span id="focusLeft">2</span><small>移除最小方块</small>
+                    </button>
+                    <button class="skill-btn" id="boostSkillBtn" type="button">
+                        <strong>强化</strong><span id="boostLeft">3</span><small>升级小方块</small>
+                    </button>
+                    <button class="skill-btn" id="scanSkillBtn" type="button">
+                        <strong>扫描</strong><span id="scanLeft">3</span><small>标出可合成</small>
+                    </button>
+                    <button class="skill-btn" id="autoSkillBtn" type="button">
+                        <strong>自动</strong><span id="autoLeft">5</span><small>走最佳方向</small>
+                    </button>
+                </div>
+
+                <div class="board-wrap">
+                    <div class="board" id="board" aria-label="2048 棋盘"></div>
+                    <div class="game-overlay hidden" id="gameOverlay">
+                        <strong id="overlayTitle">已暂停</strong>
+                        <span id="overlayText">休息一下，然后继续合成。</span>
+                        <button class="primary-btn" id="overlayRestartBtn" type="button">新开一局</button>
+                        <button class="secondary-btn" id="resumeBtn" type="button">继续</button>
+                    </div>
+                </div>
+
+                <div class="game-utility-row">
+                    <button class="secondary-btn" id="exportBtn" type="button">导出本局</button>
+                    <button class="secondary-btn" id="importBtn" type="button">导入本局</button>
+                    <button class="secondary-btn" id="slotSaveBtn" type="button">本地存档</button>
+                    <button class="secondary-btn" id="slotLoadBtn" type="button">读取本地</button>
+                    <button class="secondary-btn" id="loadBestBtn" type="button">读取最佳</button>
+                    <button class="secondary-btn" id="coachBtn" type="button">普通分析</button>
+                    <button class="secondary-btn vip-only-action" id="vipProCoachBtn" type="button" th:if="${loginUser.vipActive}">VIP 高级分析</button>
+                    <button class="secondary-btn vip-only-action" id="vipGrowthBtn" type="button" th:if="${loginUser.vipActive}">VIP 成长报告</button>
+                    <button class="secondary-btn vip-only-action" id="vipGiftBtn" type="button" th:if="${loginUser.vipActive}">领取 VIP 礼包</button>
+                    <button class="secondary-btn vip-only-action" id="vipCloudSaveBtn" type="button" th:if="${loginUser.vipActive}">云端保存</button>
+                    <button class="secondary-btn vip-only-action" id="vipCloudLoadBtn" type="button" th:if="${loginUser.vipActive}">云端读取</button>
+                    <button class="secondary-btn" id="clearCacheBtn" type="button">清除自动存档</button>
+                    <label class="toggle-line"><input id="soundToggle" type="checkbox" checked> 声音</label>
+                </div>
+
+                <div class="mission-grid" id="missionGrid"></div>
+                <div class="character-track" id="characterTrack"></div>
+            </div>
+
+            <aside class="side-panel complex-side">
+                <section class="music-card">
+                    <img src="/images/game2048-login.png" alt="Sekai 2048 音乐封面">
+                    <div class="music-main">
+                        <p class="eyebrow">专注音乐</p>
+                        <h2 id="trackTitle">深夜合成</h2>
+                        <span id="trackMood">安静游戏房间</span>
+                        <div class="music-controls">
+                            <button class="secondary-btn" id="prevTrackBtn" type="button">上一首</button>
+                            <button class="primary-btn" id="playMusicBtn" type="button">播放</button>
+                            <button class="secondary-btn" id="nextTrackBtn" type="button">下一首</button>
+                        </div>
+                        <input id="volumeSlider" type="range" min="0" max="100" value="35" aria-label="音乐音量">
+                    </div>
+                </section>
+
+                <section class="vip-perk-card" th:if="${loginUser.vipActive}">
+                    <p class="eyebrow">VIP 已生效</p>
+                    <h2 th:text="${loginUser.vipLabel} + ' 权益'">VIP 权益</h2>
+                    <ul>
+                        <li>游戏页免广告</li>
+                        <li>VIP 金色专属主题</li>
+                        <li>每日礼包：+256 分、+1 强化、+1 扫描</li>
+                        <li>8 个云端存档，可跨浏览器读取</li>
+                        <li>VIP 高级分析：推荐最佳方向、风险和三步路线</li>
+                        <li>VIP 成长报告：趋势、弱点和训练任务</li>
+                        <li>每局额外技能次数</li>
+                    </ul>
+                </section>
+
+                <section class="ad-card" th:if="${adsEnabled and !loginUser.vipActive}">
+                    <p class="eyebrow">广告</p>
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client=""
+                         data-ad-slot=""
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"
+                         th:attr="data-ad-client=${adsClient},data-ad-slot=${adsSlot}"></ins>
+                </section>
+
+                <section class="support-card" th:if="${!adsEnabled and !loginUser.vipActive}">
+                    <p class="eyebrow">支持项目</p>
+                    <h2>Sekai 2048 Plus</h2>
+                    <span>这里可以开通会员、角色包、赞助位和免广告玩法。</span>
+                    <a class="primary-btn" th:href="@{/store}" href="/store">打开商店</a>
+                </section>
+
+                <section class="panel tab-panel">
+                    <div class="side-tabs">
+                        <button class="active" type="button" data-tab="rank">排行</button>
+                        <button type="button" data-tab="missions">任务</button>
+                        <button type="button" data-tab="stats">数据</button>
+                        <button type="button" data-tab="history">记录</button>
+                        <button type="button" data-tab="settings">指南</button>
+                    </div>
+
+                    <div class="tab-content active" data-panel="rank">
+                        <p class="eyebrow">排行榜</p>
+                        <h2>最高分</h2>
+                        <ol class="rank-list">
+                            <li th:each="record : ${dashboard.leaderboard}">
+                                <span th:text="${record.nickName}">玩家</span>
+                                <strong th:text="${record.score}">0</strong>
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="tab-content" data-panel="missions">
+                        <p class="eyebrow">当前局</p>
+                        <h2>任务板</h2>
+                        <div class="compact-missions" id="compactMissions"></div>
+                    </div>
+
+                    <div class="tab-content" data-panel="stats">
+                        <p class="eyebrow">游戏数据</p>
+                        <h2>玩家统计</h2>
+                        <div class="stats-grid-small" id="serverStats">
+                            <span>加载中...</span>
+                        </div>
+                        <div class="coach-box" id="coachBox">
+                            <strong>分析助手</strong>
+                            <span>点击“普通分析”或“VIP 高级分析”查看当前棋盘风险。</span>
+                        </div>
+                        <div class="growth-box" id="vipGrowthBox" th:if="${loginUser.vipActive}">
+                            <strong>VIP 成长报告</strong>
+                            <span>点击“VIP 成长报告”，查看你的趋势、弱点和训练任务。</span>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" data-panel="history">
+                        <p class="eyebrow">最近记录</p>
+                        <h2>我的成绩</h2>
+                        <div class="record-grid compact-records">
+                            <article th:each="record : ${dashboard.myRecords}">
+                                <strong th:text="${record.score}">0</strong>
+                                <span th:text="${record.maxCharacter} + ' / ' + ${record.maxTile}">Character / 2048</span>
+                                <small th:text="${#temporals.format(record.createTime, 'MM-dd HH:mm')}">05-09</small>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" data-panel="settings">
+                        <p class="eyebrow">操作说明</p>
+                        <h2>快速指南</h2>
+                        <div class="guide-list">
+                            <span>移动：方向键 / WASD / 滑动</span>
+                            <span>撤销：Ctrl + Z</span>
+                            <span>暂停：空格键</span>
+                            <span>保存成绩：把本局分数存到服务器</span>
+                            <span>自动存档：浏览器本地恢复当前局</span>
+                            <span>每日挑战：每天固定同一套随机种子</span>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </section>
+    </main>
+</div>
+
+<dialog class="run-dialog" id="runDialog">
+    <form method="dialog">
+        <h2 id="dialogTitle">本局数据</h2>
+        <textarea id="runDataBox" spellcheck="false"></textarea>
+        <div class="dialog-actions">
+            <button class="secondary-btn" value="cancel">关闭</button>
+            <button class="primary-btn" id="applyImportBtn" type="button">应用导入</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog class="run-dialog cloud-dialog" id="cloudDialog">
+    <form method="dialog">
+        <h2>VIP 云端存档</h2>
+        <div class="cloud-save-list" id="cloudSaveList">
+            <span class="muted">加载中...</span>
+        </div>
+        <div class="dialog-actions">
+            <button class="secondary-btn" value="cancel">关闭</button>
+        </div>
+    </form>
+</dialog>
+
+<script th:if="${adsEnabled}">(adsbygoogle = window.adsbygoogle || []).push({});</script>
+<script th:src="@{/js/game2048.js}" src="/js/game2048.js"></script>
+</body>
+</html>

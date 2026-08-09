@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sekai.game2048.mapper.Sekai2048VipDailyGiftMapper">
+
+    <resultMap id="BaseResultMap" type="com.sekai.game2048.dataobject.Sekai2048VipDailyGiftDO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="rewardDate" column="reward_date"/>
+        <result property="scoreBonus" column="score_bonus"/>
+        <result property="boostBonus" column="boost_bonus"/>
+        <result property="scanBonus" column="scan_bonus"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id, user_id, reward_date, score_bonus, boost_bonus, scan_bonus, create_time
+    </sql>
+
+    <insert id="insert"
+            parameterType="com.sekai.game2048.dataobject.Sekai2048VipDailyGiftDO"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO sekai_2048_vip_daily_gift (
+            user_id, reward_date, score_bonus, boost_bonus, scan_bonus
+        ) VALUES (
+            #{userId}, #{rewardDate}, #{scoreBonus}, #{boostBonus}, #{scanBonus}
+        )
+    </insert>
+
+    <select id="selectByUserIdAndRewardDate" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_vip_daily_gift
+        WHERE user_id = #{userId}
+          AND reward_date = #{rewardDate}
+        LIMIT 1
+    </select>
+</mapper>

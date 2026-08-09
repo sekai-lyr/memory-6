@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sekai.game2048.mapper.Sekai2048GameRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.sekai.game2048.dataobject.Sekai2048GameRecordDO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="nickName" column="nickname"/>
+        <result property="score" column="score"/>
+        <result property="maxTile" column="max_tile"/>
+        <result property="maxCharacter" column="max_character"/>
+        <result property="moveCount" column="move_count"/>
+        <result property="durationSeconds" column="duration_seconds"/>
+        <result property="boardState" column="board_state"/>
+        <result property="vipLevel" column="vip_level"/>
+        <result property="vipExpireTime" column="vip_expire_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id, user_id, nickname, score, max_tile, max_character, move_count, duration_seconds, board_state, create_time
+    </sql>
+
+    <insert id="insert"
+            parameterType="com.sekai.game2048.dataobject.Sekai2048GameRecordDO"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO sekai_2048_game_record (
+            user_id, nickname, score, max_tile, max_character, move_count, duration_seconds, board_state
+        ) VALUES (
+            #{userId}, #{nickName}, #{score}, #{maxTile}, #{maxCharacter}, #{moveCount}, #{durationSeconds}, #{boardState}
+        )
+    </insert>
+
+    <select id="selectBestByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_game_record
+        WHERE user_id = #{userId}
+        ORDER BY score DESC, max_tile DESC, id DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectRecentByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_game_record
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectLeaderboard" resultMap="BaseResultMap">
+        SELECT
+            r.id, r.user_id, r.nickname, r.score, r.max_tile, r.max_character,
+            r.move_count, r.duration_seconds, r.board_state, r.create_time,
+            u.vip_level, u.vip_expire_time
+        FROM sekai_2048_game_record r
+        LEFT JOIN sekai_2048_user u ON u.id = r.user_id
+        ORDER BY r.score DESC, r.max_tile DESC, r.duration_seconds ASC, r.id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="countByUserId" resultType="long">
+        SELECT COUNT(1)
+        FROM sekai_2048_game_record
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectStatsByUserId" resultType="com.sekai.game2048.model.GameStats">
+        SELECT
+            COUNT(1) AS totalRuns,
+            COALESCE(SUM(move_count), 0) AS totalMoves,
+            COALESCE(SUM(duration_seconds), 0) AS totalSeconds,
+            COALESCE(MAX(score), 0) AS bestScore,
+            COALESCE(ROUND(AVG(score)), 0) AS averageScore,
+            COALESCE(MAX(max_tile), 0) AS bestTile
+        FROM sekai_2048_game_record
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectFavoriteCharacterByUserId" resultType="java.lang.String">
+        SELECT max_character
+        FROM sekai_2048_game_record
+        WHERE user_id = #{userId}
+        GROUP BY max_character
+        ORDER BY COUNT(1) DESC, MAX(score) DESC
+        LIMIT 1
+    </select>
+</mapper>

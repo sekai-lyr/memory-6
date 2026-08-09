@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sekai.game2048.mapper.Sekai2048MonetizationLeadMapper">
+
+    <resultMap id="BaseResultMap" type="com.sekai.game2048.dataobject.Sekai2048MonetizationLeadDO">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="nickName" column="nickname"/>
+        <result property="leadType" column="lead_type"/>
+        <result property="offerCode" column="offer_code"/>
+        <result property="contactName" column="contact_name"/>
+        <result property="contactInfo" column="contact_info"/>
+        <result property="companyName" column="company_name"/>
+        <result property="budgetCents" column="budget_cents"/>
+        <result property="message" column="message"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <sql id="BaseColumnList">
+        id, user_id, nickname, lead_type, offer_code, contact_name, contact_info,
+        company_name, budget_cents, message, status, create_time
+    </sql>
+
+    <insert id="insert"
+            parameterType="com.sekai.game2048.dataobject.Sekai2048MonetizationLeadDO"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO sekai_2048_monetization_lead (
+            user_id, nickname, lead_type, offer_code, contact_name, contact_info,
+            company_name, budget_cents, message, status
+        ) VALUES (
+            #{userId}, #{nickName}, #{leadType}, #{offerCode}, #{contactName}, #{contactInfo},
+            #{companyName}, #{budgetCents}, #{message}, #{status}
+        )
+    </insert>
+
+    <select id="selectRecentByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_monetization_lead
+        WHERE user_id = #{userId}
+        ORDER BY create_time DESC, id DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectRecent" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumnList"/>
+        FROM sekai_2048_monetization_lead
+        ORDER BY create_time DESC, id DESC
+        LIMIT #{limit}
+    </select>
+</mapper>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务条款 - Sekai 2048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<main class="legal-page">
+    <nav class="legal-nav">
+        <a th:href="@{/login}" href="/login">登录</a>
+        <a th:href="@{/home}" href="/home">游戏</a>
+        <a th:href="@{/privacy}" href="/privacy">隐私政策</a>
+    </nav>
+
+    <article class="legal-card">
+        <p class="eyebrow">Terms</p>
+        <h1>服务条款</h1>
+        <p class="muted">最后更新：2026-05-26</p>
+
+        <section>
+            <h2>服务说明</h2>
+            <p>Sekai 2048 是一个原创角色合成小游戏，提供账号登录、排行榜、游戏记录、本地存档和可选广告展示。</p>
+        </section>
+
+        <section>
+            <h2>原创内容</h2>
+            <p>本站角色、名称、视觉设定和页面内容应保持原创。请不要上传、替换或宣传未经授权的第三方角色、商标、图片、音乐或其他受保护内容。</p>
+        </section>
+
+        <section>
+            <h2>账号和排行榜</h2>
+            <p>用户应保管好账号密码。禁止使用自动脚本、篡改请求、刷分、攻击服务或干扰其他用户。我们可以隐藏、删除异常成绩或限制违规账号。</p>
+        </section>
+
+        <section>
+            <h2>广告和付费功能</h2>
+            <p>如果启用广告、赞助位、会员或角色包等商业功能，应遵守适用法律、广告平台政策和支付平台规则。实际价格、权益和退款规则应在购买前明确展示。</p>
+        </section>
+
+        <section>
+            <h2>免责声明</h2>
+            <p>本服务按现状提供。我们会尽力保持服务稳定，但不保证永不中断、数据永不丢失或完全无错误。生产环境请配置备份、监控和安全策略。</p>
+        </section>
+
+        <section>
+            <h2>条款更新</h2>
+            <p>条款更新后会在本页面显示新的更新时间。继续使用服务代表接受更新后的条款。</p>
+        </section>
+    </article>
+</main>
+</body>
+</html>

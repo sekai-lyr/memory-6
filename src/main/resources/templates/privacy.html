@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐私政策 - Sekai 2048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<main class="legal-page">
+    <nav class="legal-nav">
+        <a th:href="@{/login}" href="/login">登录</a>
+        <a th:href="@{/home}" href="/home">游戏</a>
+        <a th:href="@{/terms}" href="/terms">服务条款</a>
+    </nav>
+
+    <article class="legal-card">
+        <p class="eyebrow">Privacy</p>
+        <h1>隐私政策</h1>
+        <p class="muted">最后更新：2026-05-26</p>
+
+        <section>
+            <h2>我们收集的信息</h2>
+            <p>为了提供账号、排行榜和游戏记录功能，我们会保存用户名、昵称、头像地址、密码哈希、分数、最大方块、最大角色、步数、游戏时长、棋盘状态和创建时间。</p>
+            <p>浏览器本地会保存当前游戏进度、设置和存档槽，用于恢复游戏；这些数据默认保存在用户设备中。</p>
+        </section>
+
+        <section>
+            <h2>Cookie 和会话</h2>
+            <p>本站使用必要的会话 Cookie 来识别登录状态。没有这些 Cookie，登录后的排行榜和存档功能无法正常工作。</p>
+        </section>
+
+        <section>
+            <h2>广告和统计</h2>
+            <p>如果你在生产环境开启广告配置，第三方广告服务可能会根据其政策使用 Cookie、设备信息或访问数据。上线前请填写真实运营主体、联系方式，并按广告平台要求补充说明。</p>
+        </section>
+
+        <section>
+            <h2>数据用途</h2>
+            <p>这些数据用于登录认证、保存成绩、展示排行榜、恢复游戏、排查问题和改进体验。我们不会出售用户密码或游戏记录。</p>
+        </section>
+
+        <section>
+            <h2>数据安全</h2>
+            <p>密码以带盐哈希形式保存。生产环境应使用 HTTPS、独立数据库账号、强密码和定期备份。</p>
+        </section>
+
+        <section>
+            <h2>用户权利</h2>
+            <p>用户可以请求删除账号和游戏记录。上线前请将联系邮箱替换为真实客服或运营邮箱。</p>
+        </section>
+    </article>
+</main>
+</body>
+</html>

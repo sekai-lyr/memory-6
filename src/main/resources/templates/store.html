@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商店 - Sekai 2048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+    <script th:if="${adsEnabled}" async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+            th:src="'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + ${adsClient}"
+            crossorigin="anonymous"></script>
+</head>
+<body th:attr="data-vip=${loginUser.vipActive}">
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="logo" th:href="@{/home}" href="/home"><span>2048</span><strong>Sekai 2048</strong></a>
+        <nav>
+            <a th:href="@{/home}" href="/home">开始游戏</a>
+            <a th:href="@{/leaderboard}" href="/leaderboard">排行榜</a>
+            <a class="active" th:href="@{/store}" href="/store">商店</a>
+            <a th:href="@{/terms}" href="/terms">服务条款</a>
+            <a th:href="@{/privacy}" href="/privacy">隐私政策</a>
+        </nav>
+        <form th:action="@{/user/logout}" action="/user/logout" method="post">
+            <button class="text-btn" type="submit">退出登录</button>
+        </form>
+    </aside>
+
+    <main class="content">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Revenue Hub</p>
+                <h1>
+                    <span>商店和赞助</span>
+                    <small class="vip-badge" th:if="${loginUser.vipActive}" th:text="${loginUser.vipLabel}">VIP</small>
+                </h1>
+            </div>
+            <div class="stats store-stats">
+                <div><span>3</span><small>变现入口</small></div>
+                <div><span>¥12</span><small>最低客单</small></div>
+                <div><span>¥99+</span><small>赞助档位</small></div>
+            </div>
+        </header>
+
+        <div class="server-message success" th:if="${message}" th:text="${message}"></div>
+        <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+
+        <section class="membership-strip" th:if="${loginUser.vipActive}">
+            <strong th:text="${loginUser.vipLabel} + ' 已开通'">VIP 已开通</strong>
+            <span th:text="'有效期至 ' + ${#temporals.format(loginUser.vipExpireTime, 'yyyy-MM-dd HH:mm')}">有效期</span>
+        </section>
+
+        <section class="store-layout">
+            <div class="offer-grid">
+                <article class="offer-card" th:each="offer : ${monetization.offers}">
+                    <div>
+                        <p class="eyebrow" th:text="${offer.leadType}">MEMBERSHIP</p>
+                        <h2 th:text="${offer.title}">Sekai Plus</h2>
+                        <small class="owned-badge"
+                               th:if="${loginUser.vipActive and offer.code == 'PLUS_MONTHLY'}">已开通</small>
+                        <strong th:text="${loginUser.vipActive and offer.code == 'PLUS_MONTHLY' ? '已拥有' : offer.priceLabel}">¥12 / 月</strong>
+                        <p th:text="${offer.summary}">Offer summary</p>
+                    </div>
+                    <ul>
+                        <li th:each="feature : ${offer.features}" th:text="${feature}">Feature</li>
+                    </ul>
+                    <a class="primary-btn"
+                       th:if="${!(loginUser.vipActive and offer.code == 'PLUS_MONTHLY') and offer.checkoutUrl != null and !#strings.isEmpty(offer.checkoutUrl)}"
+                       th:href="${offer.checkoutUrl}"
+                       target="_blank"
+                       rel="noopener">去付款</a>
+                    <button class="secondary-btn" type="button"
+                            disabled
+                            th:if="${loginUser.vipActive and offer.code == 'PLUS_MONTHLY'}">当前会员</button>
+                </article>
+            </div>
+
+            <aside class="conversion-panel">
+                <section class="panel lead-panel">
+                    <p class="eyebrow">Contact</p>
+                    <h2>提交购买/赞助意向</h2>
+                    <form th:action="@{/monetization/lead}" action="/monetization/lead" method="post">
+                        <label>
+                            <span>选择项目</span>
+                            <select name="offerCode" required>
+                                <option th:each="offer : ${monetization.offers}"
+                                        th:value="${offer.code}"
+                                        th:text="${offer.title} + ' · ' + ${offer.priceLabel}">Sekai Plus</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>联系人</span>
+                            <input type="text" name="contactName" th:value="${loginUser.nickName}" maxlength="64" required>
+                        </label>
+                        <label>
+                            <span>联系方式</span>
+                            <input type="text" name="contactInfo" placeholder="微信 / 邮箱 / 手机" maxlength="120" required>
+                        </label>
+                        <label>
+                            <span>品牌或组织</span>
+                            <input type="text" name="companyName" placeholder="玩家可留空，赞助商建议填写" maxlength="120">
+                        </label>
+                        <label>
+                            <span>预算</span>
+                            <select name="budgetCents">
+                                <option value="0">先沟通</option>
+                                <option value="1200">¥12</option>
+                                <option value="1800">¥18</option>
+                                <option value="9900">¥99</option>
+                                <option value="29900">¥299</option>
+                                <option value="99900">¥999</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>备注</span>
+                            <textarea name="message" placeholder="想买会员、角色包，或想投放什么赞助内容" maxlength="500"></textarea>
+                        </label>
+                        <button class="primary-btn" type="submit">提交意向</button>
+                    </form>
+                </section>
+
+                <section class="panel">
+                    <p class="eyebrow">Pipeline</p>
+                    <h2>我的提交</h2>
+                    <div class="lead-list" th:if="${!#lists.isEmpty(monetization.myLeads)}">
+                        <article th:each="lead : ${monetization.myLeads}">
+                            <strong th:text="${lead.offerCode}">PLUS_MONTHLY</strong>
+                            <span th:text="${lead.status}">NEW</span>
+                            <small th:text="${#temporals.format(lead.createTime, 'MM-dd HH:mm')}">05-26</small>
+                        </article>
+                    </div>
+                    <p class="muted" th:if="${#lists.isEmpty(monetization.myLeads)}">还没有提交记录。</p>
+                </section>
+            </aside>
+        </section>
+    </main>
+</div>
+<script th:if="${adsEnabled}">(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</body>
+</html>

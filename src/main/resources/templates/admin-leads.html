@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商业化线索 - Sekai 2048</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body>
+<main class="legal-page">
+    <nav class="legal-nav">
+        <a th:href="@{/home}" href="/home">游戏</a>
+        <a th:href="@{/store}" href="/store">商店</a>
+        <a th:href="@{/leaderboard}" href="/leaderboard">排行榜</a>
+    </nav>
+
+    <article class="legal-card admin-lead-card">
+        <p class="eyebrow">Admin</p>
+        <h1>商业化线索</h1>
+        <p class="muted">这里展示最近 100 条会员、角色包和赞助位意向。生产环境请用强随机 token 保护这个页面。</p>
+
+        <section class="admin-lead-table" th:if="${!#lists.isEmpty(leads)}">
+            <article th:each="lead : ${leads}">
+                <div>
+                    <strong th:text="${lead.offerCode}">SPONSOR_SLOT</strong>
+                    <span th:text="${lead.leadType}">SPONSOR</span>
+                </div>
+                <div>
+                    <strong th:text="${lead.contactName}">Contact</strong>
+                    <span th:text="${lead.contactInfo}">contact@example.com</span>
+                </div>
+                <div>
+                    <strong th:text="${#strings.isEmpty(lead.companyName) ? '个人玩家' : lead.companyName}">Company</strong>
+                    <span th:text="${lead.budgetCents != null and lead.budgetCents > 0 ? '¥' + (lead.budgetCents / 100) : '先沟通'}">¥99</span>
+                </div>
+                <div>
+                    <strong th:text="${lead.status}">NEW</strong>
+                    <span th:text="${#temporals.format(lead.createTime, 'yyyy-MM-dd HH:mm')}">2026-05-26</span>
+                </div>
+                <p th:text="${#strings.isEmpty(lead.message) ? '无备注' : lead.message}">Message</p>
+            </article>
+        </section>
+        <p class="muted" th:if="${#lists.isEmpty(leads)}">还没有商业化线索。</p>
+    </article>
+</main>
+</body>
+</html>
