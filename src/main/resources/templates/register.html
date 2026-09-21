@@ -8,42 +8,62 @@
 </head>
 <body>
 <main class="auth-page register-page">
-    <section class="brand-panel">
-        <p class="eyebrow">New Player</p>
-        <h1>Sekai 2048</h1>
-        <p>注册后保存最高分、最大角色方块和每一局游戏记录。</p>
+    <section class="brand-panel" aria-labelledby="brand-title">
+        <div class="brand-content">
+            <div class="brand-topline">
+                <span class="brand-mark" aria-hidden="true">2048</span>
+                <span class="brand-context">角色合成游戏</span>
+            </div>
+            <p class="eyebrow">加入深夜棋盘</p>
+            <h1 id="brand-title">Sekai <strong>2048</strong></h1>
+            <p class="brand-lede">注册后保存最高分、角色进阶和每一局游戏记录，让你的合成路线有迹可循。</p>
+            <ul class="brand-points" aria-label="账号权益">
+                <li><strong>保存成绩</strong><span>记录每次突破</span></li>
+                <li><strong>查看排行</strong><span>和玩家一起挑战</span></li>
+                <li><strong>继续游戏</strong><span>随时回到棋盘</span></li>
+            </ul>
+        </div>
     </section>
 
     <section class="auth-panel">
         <div class="auth-card">
             <div class="card-head">
-                <span>JOIN</span>
+                <div class="access-tag">
+                    <span class="tag-mark">JOIN</span>
+                    <span>新玩家注册</span>
+                </div>
                 <h2>创建账号</h2>
-                <p>开始你的角色合成路线</p>
+                <p>建立你的角色合成路线。</p>
             </div>
 
-            <div class="server-message error" th:if="${error}" th:text="${error}"></div>
+            <div class="server-message error" role="alert" th:if="${error}" th:text="${error}"></div>
 
             <form th:action="@{/user/register}" action="/user/register" method="post">
-                <label>
+                <label class="field">
                     <span>用户名</span>
-                    <input type="text" name="userName" placeholder="例如 sekai_player" autocomplete="username" required>
+                    <input id="userName" type="text" name="userName" placeholder="例如 sekai_player" autocomplete="username" required>
                 </label>
-                <label>
+                <label class="field">
                     <span>昵称</span>
-                    <input type="text" name="nickName" placeholder="排行榜显示昵称">
+                    <input type="text" name="nickName" placeholder="排行榜显示昵称" autocomplete="nickname">
                 </label>
-                <label>
+                <label class="field">
                     <span>密码</span>
-                    <input type="password" name="password" placeholder="至少 6 位" autocomplete="new-password" required>
+                    <div class="input-wrap">
+                        <input id="password" type="password" name="password" placeholder="至少 6 位" autocomplete="new-password" required>
+                        <button class="password-toggle" id="passwordToggle" type="button" aria-controls="password" aria-pressed="false">显示</button>
+                    </div>
                 </label>
-                <label>
+                <label class="field">
                     <span>确认密码</span>
-                    <input type="password" name="confirmPassword" placeholder="再次输入密码" autocomplete="new-password" required>
+                    <input id="confirmPassword" type="password" name="confirmPassword" placeholder="再次输入密码" autocomplete="new-password" required>
                 </label>
-                <button class="primary-btn" type="submit">注册</button>
-                <a class="ghost-btn" th:href="@{/login}" href="/login">已有账号，去登录</a>
+                <div class="form-actions">
+                    <button class="primary-btn" type="submit" data-loading-label="正在创建..."><span data-submit-label>注册</span></button>
+                    <a class="ghost-btn" th:href="@{/login}" href="/login">已有账号，去登录</a>
+                </div>
             </form>
+            <p class="auth-note">注册后即可保存成绩、查看排行榜并继续挑战。</p>
             <p class="legal-links">
                 注册即代表同意
                 <a th:href="@{/terms}" href="/terms">服务条款</a>

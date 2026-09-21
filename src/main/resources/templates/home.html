@@ -47,7 +47,7 @@
                 <div class="game-toolbar">
                     <div>
                         <h2>原创角色 2048</h2>
-                        <p id="gameHint">用方向键、WASD 或滑动来移动方块。</p>
+                        <p id="gameHint" aria-live="polite">用方向键、WASD 或滑动来移动方块。</p>
                     </div>
                     <div class="toolbar-actions">
                         <select id="modeSelect" aria-label="游戏模式">
@@ -141,7 +141,7 @@
                         <span id="trackMood">安静游戏房间</span>
                         <div class="music-controls">
                             <button class="secondary-btn" id="prevTrackBtn" type="button">上一首</button>
-                            <button class="primary-btn" id="playMusicBtn" type="button">播放</button>
+                            <button class="primary-btn" id="playMusicBtn" type="button" aria-pressed="false">播放</button>
                             <button class="secondary-btn" id="nextTrackBtn" type="button">下一首</button>
                         </div>
                         <input id="volumeSlider" type="range" min="0" max="100" value="35" aria-label="音乐音量">

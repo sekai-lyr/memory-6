@@ -474,7 +474,7 @@ select {
     height: 54%;
     border-radius: 44% 44% 48% 48%;
     background: linear-gradient(#ffe4d1, #f5bd9d);
-    box-shadow: inset 0 -7px 0 rgba(214, 118, 97, 0.18);
+    background: linear-gradient(#ffe4d1 0%, #f5bd9d 78%, rgba(214, 118, 97, 0.18) 100%);
 }
 
 .character-portrait .eye {
@@ -1301,13 +1301,6 @@ body[data-theme="arcade"] {
     color: #eef6ff;
 }
 
-body[data-theme="arcade"] .content {
-    background:
-            linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-    background-size: 28px 28px;
-}
-
 body[data-theme="arcade"] .panel,
 body[data-theme="arcade"] .game-panel,
 body[data-theme="arcade"] .stats div,
@@ -1781,5 +1774,1283 @@ body[data-theme="vip"] .board {
 
     .cloud-save-item {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Sekai nocturne skin: the UI follows the source key visual instead of a separate admin palette. */
+:root {
+    color-scheme: dark;
+    --night-0: #06091a;
+    --night-1: #0a1030;
+    --night-2: #101a44;
+    --panel: rgba(13, 20, 48, 0.82);
+    --panel-strong: rgba(9, 14, 36, 0.96);
+    --text: #f4f7ff;
+    --muted-night: #9ba9c6;
+    --line-night: rgba(151, 184, 255, 0.22);
+    --cyan-night: #67e8ff;
+    --coral-night: #ff9e8e;
+    --gold-night: #ffd48a;
+    --radius-card: 20px;
+}
+
+html {
+    min-width: 320px;
+    background: var(--night-0);
+}
+
+body,
+body[data-theme="sakura"],
+body[data-theme="arcade"],
+body[data-theme="vip"] {
+    position: relative;
+    min-height: 100dvh;
+    color: var(--text);
+    background: var(--night-0);
+    font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+body::before {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    content: "";
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(6, 9, 26, 0.93) 0%, rgba(6, 9, 26, 0.75) 36%, rgba(6, 9, 26, 0.9) 100%),
+        url("../images/game2048-login.png") 66% center / cover;
+    opacity: 0.72;
+}
+
+body::after {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    content: "";
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 72% 15%, rgba(103, 232, 255, 0.12), transparent 26%),
+        radial-gradient(circle at 18% 80%, rgba(255, 158, 142, 0.1), transparent 24%),
+        linear-gradient(135deg, rgba(6, 9, 26, 0.1), rgba(6, 9, 26, 0.64));
+}
+
+::selection {
+    background: rgba(103, 232, 255, 0.35);
+    color: #ffffff;
+}
+
+:focus-visible {
+    outline: 3px solid rgba(255, 158, 142, 0.82);
+    outline-offset: 3px;
+}
+
+a {
+    text-underline-offset: 3px;
+}
+
+.app-shell {
+    position: relative;
+    z-index: 1;
+    grid-template-columns: 238px minmax(0, 1fr);
+    min-height: 100dvh;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding: 24px 16px;
+    border-right: 1px solid rgba(151, 184, 255, 0.16);
+    background:
+        linear-gradient(180deg, rgba(10, 16, 43, 0.94), rgba(6, 9, 26, 0.92)),
+        url("../images/game2048-login.png") 42% center / cover;
+    box-shadow: 18px 0 58px rgba(2, 5, 18, 0.24);
+}
+
+.logo {
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    min-height: 52px;
+    padding: 4px 6px;
+}
+
+.logo span {
+    width: 52px;
+    height: 52px;
+    border: 1px solid rgba(103, 232, 255, 0.55);
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(103, 232, 255, 0.95), rgba(24, 149, 186, 0.88));
+    color: #071326;
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: -0.08em;
+    box-shadow: 0 10px 24px rgba(103, 232, 255, 0.2);
+}
+
+.logo strong {
+    color: #ffffff;
+    font-size: 16px;
+    letter-spacing: -0.035em;
+}
+
+.sidebar nav {
+    gap: 6px;
+    margin-top: 20px;
+}
+
+.sidebar nav a,
+.text-btn {
+    min-height: 46px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: rgba(226, 235, 255, 0.68);
+    font-size: 14px;
+    transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.sidebar nav a.active,
+.sidebar nav a:hover,
+.text-btn:hover {
+    border-color: rgba(103, 232, 255, 0.2);
+    background: rgba(103, 232, 255, 0.1);
+    color: #ffffff;
+    transform: translateX(2px);
+}
+
+.sidebar form {
+    margin-top: auto;
+}
+
+.text-btn {
+    width: 100%;
+}
+
+.content {
+    width: min(100%, 1480px);
+    min-width: 0;
+    margin: 0 auto;
+    padding: clamp(22px, 3vw, 44px);
+}
+
+.topbar {
+    align-items: flex-end;
+    gap: 28px;
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    margin-bottom: 10px;
+    color: var(--cyan-night);
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    line-height: 1.4;
+}
+
+.topbar h1 {
+    color: #ffffff;
+    font-size: clamp(30px, 3vw, 52px);
+    letter-spacing: -0.06em;
+    line-height: 0.98;
+}
+
+.topbar h1 small {
+    flex: 0 0 auto;
+}
+
+.vip-badge,
+.owned-badge {
+    border: 1px solid rgba(255, 212, 138, 0.45);
+    border-radius: 999px;
+    background: rgba(255, 212, 138, 0.12);
+    color: var(--gold-night);
+}
+
+.stats {
+    gap: 10px;
+}
+
+.stats div,
+.panel,
+.game-panel,
+.leaderboard-table article,
+.offer-card,
+.legal-card,
+.admin-lead-table article,
+.ad-card,
+.support-card,
+.vip-perk-card {
+    border: 1px solid var(--line-night);
+    border-radius: var(--radius-card);
+    background:
+        linear-gradient(145deg, rgba(103, 232, 255, 0.055), transparent 34%),
+        var(--panel);
+    box-shadow:
+        0 22px 58px rgba(2, 5, 18, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.stats div {
+    min-width: 112px;
+    padding: 13px 14px;
+}
+
+.stats span {
+    color: #ffffff;
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 23px;
+    letter-spacing: -0.04em;
+}
+
+.stats small,
+.muted,
+.game-toolbar p,
+.battle-stats small,
+.record-grid span,
+.record-grid small,
+.leaderboard-table p,
+.offer-card p:not(.eyebrow),
+.support-card span,
+.lead-list small {
+    color: var(--muted-night);
+}
+
+.game-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 372px);
+    gap: 26px;
+    align-items: start;
+}
+
+.game-panel,
+.panel {
+    padding: clamp(18px, 2vw, 28px);
+}
+
+.game-toolbar {
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.game-toolbar h2,
+.panel h2,
+.support-card h2,
+.music-main h2,
+.offer-card h2,
+.legal-card h1,
+.legal-card h2 {
+    color: #ffffff;
+    letter-spacing: -0.045em;
+}
+
+.game-toolbar h2 {
+    font-size: clamp(23px, 2.4vw, 34px);
+}
+
+.toolbar-actions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(104px, 1fr));
+    flex: 1 1 520px;
+    gap: 8px;
+    max-width: 600px;
+}
+
+.primary-btn,
+.secondary-btn,
+select,
+.toggle-line {
+    min-height: 42px;
+    border-radius: 11px;
+    font-size: 13px;
+}
+
+.primary-btn,
+.secondary-btn {
+    padding: 0 13px;
+    transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.primary-btn {
+    border: 1px solid rgba(103, 232, 255, 0.6);
+    background: linear-gradient(135deg, var(--cyan-night), #9cf4ff);
+    color: #071326;
+    box-shadow: 0 10px 24px rgba(103, 232, 255, 0.18);
+}
+
+.secondary-btn {
+    border: 1px solid rgba(151, 184, 255, 0.28);
+    background: rgba(10, 16, 43, 0.66);
+    color: #e8efff;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.toggle-line:hover {
+    border-color: rgba(103, 232, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+.primary-btn:active,
+.secondary-btn:active {
+    transform: translateY(1px) scale(0.985);
+}
+
+select,
+.content input,
+.content textarea {
+    border: 1px solid rgba(151, 184, 255, 0.28);
+    background: rgba(5, 9, 27, 0.76);
+    color: #f4f7ff;
+}
+
+select {
+    width: 100%;
+    padding: 0 10px;
+    font-weight: 800;
+}
+
+select:focus,
+.content input:focus,
+.content textarea:focus {
+    border-color: var(--cyan-night);
+    box-shadow: 0 0 0 4px rgba(103, 232, 255, 0.13);
+    outline: none;
+}
+
+.battle-stats div,
+.record-grid article,
+.guide-list span,
+.stats-grid-small div,
+.stats-grid-small span,
+.cloud-save-item,
+.lead-list article {
+    border: 1px solid rgba(151, 184, 255, 0.16);
+    border-radius: 14px;
+    background: rgba(7, 12, 34, 0.58);
+}
+
+.battle-stats div {
+    padding: 12px 13px;
+}
+
+.battle-stats span {
+    color: #ffffff;
+    font-family: "Cascadia Mono", Consolas, monospace;
+}
+
+.skill-bar {
+    gap: 9px;
+}
+
+.skill-btn {
+    min-height: 78px;
+    border: 1px solid rgba(103, 232, 255, 0.22);
+    border-radius: 15px;
+    background: linear-gradient(145deg, rgba(103, 232, 255, 0.12), rgba(9, 14, 36, 0.84));
+    color: #eef4ff;
+    box-shadow: none;
+    transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.skill-btn:hover:not(:disabled) {
+    border-color: rgba(103, 232, 255, 0.62);
+    transform: translateY(-2px);
+}
+
+.skill-btn span {
+    border: 1px solid rgba(103, 232, 255, 0.36);
+    background: rgba(103, 232, 255, 0.14);
+    color: var(--cyan-night);
+}
+
+.skill-btn small {
+    color: var(--muted-night);
+}
+
+.vip-only-action {
+    border-color: rgba(255, 212, 138, 0.44);
+    background: linear-gradient(135deg, rgba(255, 212, 138, 0.16), rgba(10, 16, 43, 0.8));
+    color: var(--gold-night);
+}
+
+.board-wrap {
+    width: min(100%, 680px);
+    margin: 0 auto;
+}
+
+.board {
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid rgba(103, 232, 255, 0.3);
+    border-radius: 24px;
+    background:
+        linear-gradient(145deg, rgba(103, 232, 255, 0.1), transparent 42%),
+        #080d27;
+    box-shadow:
+        0 24px 58px rgba(0, 0, 0, 0.36),
+        inset 0 1px 0 rgba(255, 255, 255, 0.11),
+        0 0 0 1px rgba(255, 158, 142, 0.08);
+}
+
+.board.size-5 {
+    gap: 9px;
+    padding: 9px;
+}
+
+.tile {
+    border-radius: 17px;
+    border-color: color-mix(in srgb, var(--aura), #ffffff 44%);
+    background:
+        radial-gradient(circle at 28% 16%, var(--aura), transparent 28%),
+        linear-gradient(145deg, color-mix(in srgb, var(--tile-color), #ffffff 20%), var(--tile-color) 61%, #0a1234);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -18px 30px rgba(0, 0, 0, 0.2),
+        0 10px 25px rgba(1, 7, 22, 0.3);
+    transition: transform 160ms ease, filter 160ms ease;
+}
+
+.tile:hover {
+    filter: brightness(1.07);
+}
+
+.tile.empty {
+    border-color: rgba(151, 184, 255, 0.08);
+    background: rgba(151, 184, 255, 0.06);
+}
+
+.tile-value {
+    min-width: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 9px;
+    background: rgba(5, 9, 27, 0.72);
+    font-family: "Cascadia Mono", Consolas, monospace;
+}
+
+.tile-name {
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 9px;
+    background: rgba(5, 9, 27, 0.56);
+    color: #ffffff;
+}
+
+.tile.hint-target {
+    outline-color: var(--gold-night);
+}
+
+.tile.scan-target {
+    outline-color: var(--cyan-night);
+}
+
+.game-overlay {
+    inset: 12px;
+    border: 1px solid rgba(103, 232, 255, 0.36);
+    border-radius: 21px;
+    background: rgba(6, 9, 26, 0.88);
+    backdrop-filter: blur(10px);
+}
+
+.game-overlay strong {
+    color: #ffffff;
+    letter-spacing: -0.05em;
+}
+
+.mission-grid {
+    gap: 9px;
+}
+
+.mission-card {
+    border: 1px solid rgba(255, 212, 138, 0.24);
+    border-radius: 14px;
+    background: rgba(255, 212, 138, 0.08);
+}
+
+.mission-card.done {
+    border-color: rgba(103, 232, 255, 0.3);
+    background: rgba(103, 232, 255, 0.08);
+}
+
+.mission-card span {
+    color: var(--muted-night);
+}
+
+.character-track span {
+    border: 1px solid rgba(103, 232, 255, 0.2);
+    background: rgba(103, 232, 255, 0.08);
+    color: var(--cyan-night);
+}
+
+.side-panel,
+.complex-side,
+.conversion-panel {
+    gap: 16px;
+}
+
+.complex-side {
+    top: 22px;
+    max-height: calc(100dvh - 44px);
+}
+
+.music-card {
+    gap: 15px;
+    padding: 15px;
+    border: 1px solid rgba(103, 232, 255, 0.32);
+    border-radius: var(--radius-card);
+    background:
+        linear-gradient(145deg, rgba(6, 9, 26, 0.58), rgba(6, 9, 26, 0.86)),
+        url("../images/game2048-login.png") center / cover;
+    box-shadow: 0 22px 54px rgba(2, 5, 18, 0.3);
+}
+
+.music-card img {
+    border: 1px solid rgba(103, 232, 255, 0.46);
+    border-radius: 15px;
+}
+
+.music-main > span {
+    color: rgba(244, 247, 255, 0.68);
+}
+
+.music-card input[type="range"] {
+    accent-color: var(--cyan-night);
+}
+
+.music-controls .secondary-btn {
+    background: rgba(255, 255, 255, 0.07);
+    color: #ffffff;
+}
+
+.vip-perk-card {
+    border-color: rgba(255, 212, 138, 0.38);
+    background:
+        linear-gradient(145deg, rgba(255, 212, 138, 0.14), transparent 34%),
+        rgba(16, 22, 49, 0.9);
+}
+
+.vip-perk-card h2 {
+    color: var(--gold-night);
+}
+
+.vip-perk-card li {
+    color: rgba(244, 247, 255, 0.72);
+}
+
+.ad-card ins {
+    min-height: 112px;
+    border: 1px solid rgba(151, 184, 255, 0.14);
+    border-radius: 14px;
+    background: rgba(7, 12, 34, 0.58);
+}
+
+.support-card .primary-btn {
+    margin-top: 16px;
+}
+
+.tab-panel {
+    border-radius: var(--radius-card);
+}
+
+.side-tabs {
+    border-bottom: 1px solid rgba(151, 184, 255, 0.16);
+    background: rgba(6, 9, 26, 0.6);
+}
+
+.side-tabs button {
+    border-right-color: rgba(151, 184, 255, 0.13);
+    color: var(--muted-night);
+    transition: background-color 180ms ease, color 180ms ease;
+}
+
+.side-tabs button.active {
+    background: rgba(103, 232, 255, 0.09);
+    color: var(--cyan-night);
+}
+
+.guide-list span {
+    color: #e8efff;
+}
+
+.stats-grid-small div,
+.stats-grid-small span {
+    color: #eef3ff;
+}
+
+.stats-grid-small small {
+    color: var(--muted-night);
+}
+
+.coach-box,
+.growth-box {
+    border: 1px solid rgba(103, 232, 255, 0.2);
+    border-radius: 14px;
+    background: rgba(6, 9, 26, 0.74);
+}
+
+.growth-box {
+    border-color: rgba(255, 212, 138, 0.24);
+}
+
+.game-utility-row {
+    gap: 8px;
+}
+
+.toggle-line {
+    border: 1px solid rgba(151, 184, 255, 0.22);
+    background: rgba(7, 12, 34, 0.6);
+    color: #e8efff;
+}
+
+.leaderboard-table {
+    gap: 10px;
+}
+
+.leaderboard-table article {
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    gap: 18px;
+    padding: 17px 19px;
+}
+
+.leaderboard-table article:first-child {
+    border-color: rgba(255, 212, 138, 0.44);
+    background:
+        linear-gradient(100deg, rgba(255, 212, 138, 0.14), transparent 65%),
+        var(--panel);
+}
+
+.rank {
+    width: 44px;
+    height: 44px;
+    border: 1px solid rgba(255, 212, 138, 0.42);
+    border-radius: 14px;
+    background: rgba(255, 212, 138, 0.14);
+    color: var(--gold-night);
+}
+
+.leaderboard-table b {
+    color: var(--cyan-night);
+    font-family: "Cascadia Mono", Consolas, monospace;
+}
+
+.store-hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(360px, 1.3fr);
+    min-height: 290px;
+    margin: 0 0 20px;
+    overflow: hidden;
+    border: 1px solid rgba(103, 232, 255, 0.3);
+    border-radius: 24px;
+    background: #080d27;
+    box-shadow: 0 26px 62px rgba(2, 5, 18, 0.28);
+}
+
+.store-hero-copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(24px, 4vw, 48px);
+    background: linear-gradient(90deg, rgba(6, 9, 26, 0.96), rgba(6, 9, 26, 0.78));
+}
+
+.store-hero-copy h2 {
+    max-width: 10ch;
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(31px, 4vw, 56px);
+    letter-spacing: -0.07em;
+    line-height: 0.98;
+}
+
+.store-hero-copy p:last-child {
+    max-width: 31ch;
+    margin: 18px 0 0;
+    color: rgba(244, 247, 255, 0.68);
+    line-height: 1.6;
+}
+
+.store-hero-image {
+    width: 100%;
+    height: 100%;
+    min-height: 290px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.membership-strip {
+    border: 1px solid rgba(255, 212, 138, 0.36);
+    border-radius: 16px;
+    background: linear-gradient(100deg, rgba(255, 212, 138, 0.15), rgba(10, 16, 43, 0.84));
+    box-shadow: none;
+}
+
+.membership-strip strong {
+    color: var(--gold-night);
+}
+
+.offer-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.offer-card {
+    min-height: 420px;
+    padding: 21px;
+    box-shadow: 0 22px 54px rgba(2, 5, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.offer-card:nth-child(2) {
+    border-color: rgba(103, 232, 255, 0.42);
+    background:
+        linear-gradient(145deg, rgba(103, 232, 255, 0.13), transparent 42%),
+        var(--panel);
+}
+
+.offer-card strong {
+    color: var(--cyan-night);
+}
+
+.offer-card ul {
+    color: #dbe5fb;
+}
+
+.lead-panel form {
+    gap: 13px;
+}
+
+.lead-panel label span {
+    color: #e8efff;
+}
+
+.lead-panel input,
+.lead-panel textarea {
+    border-color: rgba(151, 184, 255, 0.26);
+    border-radius: 11px;
+    background: rgba(5, 9, 27, 0.7);
+    color: #ffffff;
+}
+
+.lead-list article {
+    border-color: rgba(151, 184, 255, 0.14);
+}
+
+.lead-list span {
+    color: var(--cyan-night);
+}
+
+.legal-page {
+    position: relative;
+    z-index: 1;
+    min-height: 100dvh;
+    padding: clamp(20px, 4vw, 52px);
+    background: transparent;
+}
+
+.legal-nav {
+    width: min(980px, 100%);
+    margin-bottom: 16px;
+    gap: 8px;
+}
+
+.legal-nav a {
+    min-height: 40px;
+    border: 1px solid rgba(151, 184, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(10, 16, 43, 0.78);
+    color: #e8efff;
+    transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.legal-nav a:hover {
+    border-color: rgba(103, 232, 255, 0.55);
+    background: rgba(103, 232, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.legal-card {
+    width: min(980px, 100%);
+    padding: clamp(24px, 5vw, 54px);
+    background:
+        linear-gradient(145deg, rgba(103, 232, 255, 0.06), transparent 30%),
+        rgba(10, 16, 43, 0.86);
+}
+
+.legal-card h1 {
+    margin-bottom: 10px;
+    font-size: clamp(36px, 6vw, 68px);
+    line-height: 0.96;
+}
+
+.legal-card section {
+    margin-top: 38px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(151, 184, 255, 0.14);
+}
+
+.legal-card section h2 {
+    margin-bottom: 12px;
+    font-size: 22px;
+}
+
+.legal-card p {
+    max-width: 70ch;
+    color: #c2cde3;
+    line-height: 1.85;
+}
+
+.admin-lead-card {
+    width: min(1180px, 100%);
+}
+
+.admin-lead-table article {
+    border-radius: 15px;
+    background: rgba(7, 12, 34, 0.62);
+}
+
+.admin-lead-table span,
+.admin-lead-table p {
+    color: var(--muted-night);
+}
+
+.run-dialog {
+    border: 1px solid rgba(103, 232, 255, 0.32);
+    border-radius: 18px;
+    background: var(--panel-strong);
+    color: var(--text);
+}
+
+.run-dialog::backdrop {
+    background: rgba(2, 5, 18, 0.78);
+    backdrop-filter: blur(8px);
+}
+
+.run-dialog textarea {
+    border: 1px solid rgba(151, 184, 255, 0.24);
+    border-radius: 12px;
+    background: rgba(5, 9, 27, 0.82);
+    color: #ffffff;
+}
+
+.achievement-toast {
+    right: 22px;
+    bottom: 22px;
+    border: 1px solid rgba(255, 212, 138, 0.32);
+    border-radius: 15px;
+    background: rgba(9, 14, 36, 0.94);
+    box-shadow: 0 22px 54px rgba(2, 5, 18, 0.38);
+}
+
+.achievement-toast strong {
+    color: var(--gold-night);
+}
+
+@media (max-width: 1120px) {
+    .app-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: sticky;
+        z-index: 5;
+        top: 0;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 14px;
+        align-items: center;
+        width: 100%;
+        height: auto;
+        padding: 12px 18px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(151, 184, 255, 0.16);
+        background: rgba(6, 9, 26, 0.88);
+        backdrop-filter: blur(18px);
+    }
+
+    .sidebar nav {
+        display: flex;
+        min-width: 0;
+        margin-top: 0;
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+
+    .sidebar nav a {
+        flex: 0 0 auto;
+        min-height: 40px;
+        padding: 10px 12px;
+        white-space: nowrap;
+    }
+
+    .sidebar nav a:hover,
+    .text-btn:hover {
+        transform: none;
+    }
+
+    .sidebar form {
+        margin-top: 0;
+    }
+
+    .text-btn {
+        min-height: 40px;
+        padding: 8px 11px;
+        white-space: nowrap;
+    }
+
+    .game-layout,
+    .store-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .complex-side,
+    .conversion-panel {
+        position: static;
+        max-height: none;
+    }
+}
+
+@media (max-width: 820px) {
+    body {
+        background-attachment: scroll;
+    }
+
+    .topbar {
+        display: grid;
+        align-items: start;
+    }
+
+    .stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .stats div {
+        min-width: 0;
+    }
+
+    .toolbar-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-width: none;
+    }
+
+    .store-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .store-hero-copy {
+        min-height: 230px;
+        background: linear-gradient(180deg, rgba(6, 9, 26, 0.92), rgba(6, 9, 26, 0.72));
+    }
+
+    .store-hero-image {
+        min-height: 230px;
+        max-height: 300px;
+    }
+
+    .offer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        grid-template-columns: 1fr auto;
+    }
+
+    .sidebar nav {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+    }
+
+    .content {
+        padding: 18px 14px 28px;
+    }
+
+    .topbar h1 {
+        font-size: 36px;
+    }
+
+    .stats,
+    .offer-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-toolbar {
+        display: grid;
+    }
+
+    .toolbar-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .battle-stats,
+    .skill-bar,
+    .mission-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .board {
+        gap: 7px;
+        padding: 7px;
+        border-radius: 18px;
+    }
+
+    .tile {
+        border-radius: 12px;
+    }
+
+    .tile-value {
+        top: 5px;
+        left: 5px;
+        min-width: 27px;
+        height: 22px;
+        font-size: 12px;
+    }
+
+    .tile-name {
+        min-height: 22px;
+        padding: 3px 3px;
+        font-size: 9px;
+    }
+
+    .music-card {
+        grid-template-columns: 82px minmax(0, 1fr);
+    }
+
+    .music-card img {
+        width: 82px;
+    }
+
+    .side-tabs,
+    .stats-grid-small {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .leaderboard-table article {
+        grid-template-columns: 44px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .leaderboard-table b {
+        grid-column: 2;
+        font-size: 23px;
+    }
+
+    .legal-card {
+        padding: 24px 18px;
+        border-radius: 17px;
+    }
+
+    .legal-card section {
+        margin-top: 28px;
+        padding-top: 20px;
+    }
+
+    .cloud-save-item {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Theme selectors stay dark so the chosen board theme changes tile data, not the whole product identity. */
+body[data-theme] .content {
+    background: transparent;
+}
+
+body[data-theme] .sidebar {
+    background:
+        linear-gradient(180deg, rgba(10, 16, 43, 0.94), rgba(6, 9, 26, 0.92)),
+        url("../images/game2048-login.png") 42% center / cover;
+}
+
+body[data-theme] .panel,
+body[data-theme] .game-panel,
+body[data-theme] .stats div,
+body[data-theme] .leaderboard-table article,
+body[data-theme] .offer-card {
+    border-color: var(--line-night);
+    background:
+        linear-gradient(145deg, rgba(103, 232, 255, 0.055), transparent 34%),
+        var(--panel);
+    color: var(--text);
+}
+
+body[data-theme] .board {
+    border-color: rgba(103, 232, 255, 0.3);
+    background:
+        linear-gradient(145deg, rgba(103, 232, 255, 0.1), transparent 42%),
+        #080d27;
+}
+
+body[data-theme] .primary-btn {
+    border-color: rgba(103, 232, 255, 0.6);
+    background: linear-gradient(135deg, var(--cyan-night), #9cf4ff);
+    color: #071326;
+}
+
+body[data-theme] .secondary-btn,
+body[data-theme] .toggle-line {
+    border-color: rgba(151, 184, 255, 0.28);
+    background: rgba(10, 16, 43, 0.66);
+    color: #e8efff;
+}
+
+body[data-theme] .battle-stats div,
+body[data-theme] .record-grid article,
+body[data-theme] .guide-list span,
+body[data-theme] .side-tabs,
+body[data-theme] .side-tabs button.active,
+body[data-theme] .stats-grid-small div,
+body[data-theme] .stats-grid-small span {
+    border-color: rgba(151, 184, 255, 0.16);
+    background: rgba(7, 12, 34, 0.58);
+    color: #eef3ff;
+}
+
+body[data-theme] .logo span,
+body[data-theme] .rank {
+    background: linear-gradient(145deg, rgba(103, 232, 255, 0.95), rgba(24, 149, 186, 0.88));
+    color: #071326;
+}
+
+/* Motion layer: native WAAPI keeps the Maven-served frontend dependency-free. */
+[data-motion="full"] .reveal-ready {
+    opacity: 0;
+    transform: translateY(18px);
+}
+
+.tile--spawn,
+.tile--merge {
+    will-change: transform, opacity;
+}
+
+.score-float {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 4;
+    color: var(--gold-night);
+    font-family: "Cascadia Mono", Consolas, monospace;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    pointer-events: none;
+    text-shadow: 0 2px 16px rgba(255, 212, 138, 0.42);
+}
+
+.primary-btn,
+.secondary-btn,
+.skill-btn,
+.side-tabs button,
+.tile,
+.music-card img {
+    transition: transform 180ms ease, filter 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.primary-btn:active,
+.secondary-btn:active,
+.skill-btn:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+.tile:hover {
+    transform: translateY(-2px) scale(1.015);
+    filter: brightness(1.1) saturate(1.04);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.42),
+        inset 0 -18px 30px rgba(0, 0, 0, 0.2),
+        0 16px 30px rgba(1, 7, 22, 0.38);
+}
+
+.music-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.music-card::after {
+    position: absolute;
+    inset: auto 16px 14px;
+    height: 2px;
+    content: "";
+    transform: scaleX(0.18);
+    transform-origin: left;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--cyan-night), var(--coral-night));
+    opacity: 0.52;
+    transition: transform 300ms ease, opacity 300ms ease;
+}
+
+.music-card.is-playing::after {
+    transform: scaleX(1);
+    opacity: 1;
+    animation: musicProgress 2.8s ease-in-out infinite alternate;
+}
+
+.music-card.is-playing img {
+    animation: coverPulse 1.8s ease-in-out infinite;
+}
+
+.side-tabs button:hover {
+    color: #ffffff;
+    background: rgba(103, 232, 255, 0.08);
+}
+
+.mission-card,
+.battle-stats div,
+.record-grid article,
+.guide-list span {
+    transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.mission-card:hover,
+.battle-stats div:hover,
+.record-grid article:hover,
+.guide-list span:hover {
+    transform: translateY(-2px);
+    border-color: rgba(103, 232, 255, 0.38);
+}
+
+@keyframes musicProgress {
+    from { transform: scaleX(0.36); }
+    to { transform: scaleX(1); }
+}
+
+@keyframes coverPulse {
+    50% { transform: scale(1.025) rotate(0.7deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-motion="full"] .reveal-ready {
+        opacity: 1;
+        transform: none;
+    }
+
+    .primary-btn:active,
+    .secondary-btn:active,
+    .skill-btn:active,
+    .tile:hover,
+    .mission-card:hover,
+    .battle-stats div:hover,
+    .record-grid article:hover,
+    .guide-list span:hover {
+        transform: none;
+    }
+
+    .music-card.is-playing::after,
+    .music-card.is-playing img {
+        animation: none;
     }
 }

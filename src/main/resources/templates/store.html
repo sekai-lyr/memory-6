@@ -45,6 +45,18 @@
         <div class="server-message success" th:if="${message}" th:text="${message}"></div>
         <div class="server-message error" th:if="${error}" th:text="${error}"></div>
 
+        <section class="store-hero">
+            <div class="store-hero-copy">
+                <p class="eyebrow">角色成长与支持</p>
+                <h2>让每一次合成，都有下一张牌。</h2>
+                <p>把会员、角色包和赞助支持留在同一个夜间游戏房间里。</p>
+            </div>
+            <img class="store-hero-image"
+                 src="/images/sekai-store-banner.png"
+                 alt="深夜房间里发光的角色方块棋盘"
+                 loading="eager">
+        </section>
+
         <section class="membership-strip" th:if="${loginUser.vipActive}">
             <strong th:text="${loginUser.vipLabel} + ' 已开通'">VIP 已开通</strong>
             <span th:text="'有效期至 ' + ${#temporals.format(loginUser.vipExpireTime, 'yyyy-MM-dd HH:mm')}">有效期</span>
@@ -85,7 +97,7 @@
                             <select name="offerCode" required>
                                 <option th:each="offer : ${monetization.offers}"
                                         th:value="${offer.code}"
-                                        th:text="${offer.title} + ' · ' + ${offer.priceLabel}">Sekai Plus</option>
+                                        th:text="${offer.title} + ' / ' + ${offer.priceLabel}">Sekai Plus</option>
                             </select>
                         </label>
                         <label>

@@ -37,7 +37,7 @@
                         <span th:text="${record.nickName}">Player</span>
                         <small class="vip-badge mini" th:if="${record.vipActive}">VIP</small>
                     </strong>
-                    <p th:text="${record.maxCharacter} + ' · 最大方块 ' + ${record.maxTile}">Character</p>
+                    <p th:text="${record.maxCharacter} + ' / 最大方块 ' + ${record.maxTile}">Character</p>
                 </div>
                 <b th:text="${record.score}">0</b>
             </article>

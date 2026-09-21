@@ -94,6 +94,145 @@ let boardSize = 4;
 let targetTile = 2048;
 const vipActive = document.body?.dataset.vip === "true";
 let vipGiftClaimed = false;
+const prefersReducedMotion = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false;
+let previousBoardSnapshot = null;
+let pendingRender = "reset";
+let lastScoreGain = 0;
+let lastSpawnIndex = null;
+let motionObserver = null;
+
+document.documentElement.dataset.motion = prefersReducedMotion ? "reduced" : "full";
+
+function animateElement(element, keyframes, options) {
+    if (prefersReducedMotion || !element?.animate) {
+        return null;
+    }
+    const animation = element.animate(keyframes, {
+        duration: 420,
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+        fill: "both",
+        ...options
+    });
+    animation.finished.catch(() => {});
+    return animation;
+}
+
+function setupPageMotion() {
+    if (prefersReducedMotion) {
+        return;
+    }
+
+    const targets = [...document.querySelectorAll(".sidebar, .topbar, .game-panel, .side-panel > *")];
+    const reveal = (element, index) => {
+        if (element.dataset.revealed === "true") {
+            return;
+        }
+        element.dataset.revealed = "true";
+        if (!element.animate) {
+            element.classList.remove("reveal-ready");
+            return;
+        }
+        const animation = animateElement(element, [
+            { opacity: 0, transform: "translateY(18px)" },
+            { opacity: 1, transform: "translateY(0)" }
+        ], { duration: 560, delay: Math.min(index, 5) * 70 });
+        animation?.finished.then(() => {
+            element.classList.remove("reveal-ready");
+            animation.cancel();
+        }).catch(() => {});
+    };
+
+    targets.forEach((element) => element.classList.add("reveal-ready"));
+    if (!("IntersectionObserver" in window)) {
+        targets.forEach(reveal);
+        return;
+    }
+
+    motionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                reveal(entry.target, targets.indexOf(entry.target));
+                motionObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+    targets.forEach((element) => motionObserver.observe(element));
+    window.addEventListener("pagehide", () => motionObserver?.disconnect(), { once: true });
+}
+
+function animateRenderedTiles() {
+    if (prefersReducedMotion) {
+        return;
+    }
+
+    const tiles = [...boardEl.querySelectorAll(".tile:not(.empty)")];
+    tiles.forEach((tile, index) => {
+        const isSpawn = tile.classList.contains("tile--spawn");
+        const isMerge = tile.classList.contains("tile--merge");
+        let keyframes = [
+            { opacity: 0.82, transform: "translateY(6px) scale(0.97)" },
+            { opacity: 1, transform: "translateY(0) scale(1)" }
+        ];
+        let duration = 320;
+
+        if (isSpawn) {
+            keyframes = [
+                { opacity: 0, transform: "scale(0.58) rotate(-4deg)" },
+                { opacity: 1, transform: "scale(1.04) rotate(0deg)" },
+                { opacity: 1, transform: "scale(1) rotate(0deg)" }
+            ];
+            duration = 480;
+        } else if (isMerge) {
+            keyframes = [
+                { opacity: 0.9, transform: "scale(0.86)" },
+                { opacity: 1, transform: "scale(1.12)" },
+                { opacity: 1, transform: "scale(1)" }
+            ];
+            duration = 440;
+        } else if (pendingRender === "shuffle") {
+            keyframes = [
+                { opacity: 0.45, transform: "scale(0.92) rotate(-2deg)" },
+                { opacity: 1, transform: "scale(1) rotate(0deg)" }
+            ];
+            duration = 390;
+        }
+
+        const animation = animateElement(tile, keyframes, {
+            duration,
+            delay: Math.min(index, 8) * 22
+        });
+        animation?.finished.then(() => {
+            tile.classList.remove("tile--spawn", "tile--merge");
+            animation.cancel();
+        }).catch(() => {});
+    });
+}
+
+function showScoreGain(gain) {
+    if (prefersReducedMotion || !gain) {
+        return;
+    }
+    const boardWrap = boardEl.parentElement;
+    const scoreFloat = document.createElement("span");
+    scoreFloat.className = "score-float";
+    scoreFloat.textContent = "+" + gain;
+    boardWrap.appendChild(scoreFloat);
+    const animation = animateElement(scoreFloat, [
+        { opacity: 0, transform: "translateY(8px) scale(0.82)" },
+        { opacity: 1, transform: "translateY(0) scale(1)" },
+        { opacity: 0, transform: "translateY(-26px) scale(1.04)" }
+    ], { duration: 720, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
+    animation?.finished.then(() => scoreFloat.remove()).catch(() => scoreFloat.remove());
+}
+
+function pulseValue(element) {
+    const animation = animateElement(element, [
+        { transform: "scale(1)", color: "inherit" },
+        { transform: "scale(1.13)", color: "var(--cyan-night)" },
+        { transform: "scale(1)", color: "inherit" }
+    ], { duration: 420 });
+    animation?.finished.then(() => animation.cancel()).catch(() => {});
+}
 
 function startGame() {
     boardSize = Number(boardSizeSelect.value || boardSize || 4);
@@ -113,6 +252,9 @@ function startGame() {
     applyVipBoosts();
     achieved = new Set();
     paused = false;
+    previousBoardSnapshot = null;
+    pendingRender = "reset";
+    lastScoreGain = 0;
     rngState = mode === "daily" ? Number(dailySeed) : Date.now();
     overlay.classList.add("hidden");
     addRandomTile();
@@ -152,6 +294,9 @@ function continueGame() {
         saved = false;
         history = [];
         paused = false;
+        previousBoardSnapshot = null;
+        pendingRender = "restore";
+        lastScoreGain = 0;
         startTimer();
         render();
         hintEl.textContent = "已恢复上次未完成的对局。";
@@ -180,9 +325,11 @@ function addRandomTile() {
     const [row, col] = empty[Math.floor(random() * empty.length)];
     const chanceForFour = mode === "chaos" ? 0.28 : 0.1;
     board[row][col] = random() < chanceForFour ? 4 : 2;
+    lastSpawnIndex = row * boardSize + col;
 }
 
 function render() {
+    const previousValues = previousBoardSnapshot ? previousBoardSnapshot.flat() : [];
     boardEl.innerHTML = "";
     boardEl.style.setProperty("--board-size", String(boardSize));
     boardEl.classList.toggle("size-5", boardSize === 5);
@@ -191,6 +338,14 @@ function render() {
         tile.className = value ? "tile" : "tile empty";
         tile.dataset.index = String(index);
         if (value) {
+            const previousValue = previousValues[index] || 0;
+            if (pendingRender === "reset" || pendingRender === "restore") {
+                tile.classList.add("tile--spawn");
+            } else if (value > previousValue) {
+                tile.classList.add("tile--merge");
+            } else if (pendingRender === "move" && index === lastSpawnIndex) {
+                tile.classList.add("tile--spawn");
+            }
             const character = getCharacter(value);
             tile.style.setProperty("--tile-color", character.color);
             tile.style.setProperty("--hair", character.hair);
@@ -217,6 +372,7 @@ function render() {
         }
         boardEl.appendChild(tile);
     });
+    previousBoardSnapshot = board.map((row) => [...row]);
     scoreEl.textContent = score;
     moveCountEl.textContent = moves;
     comboCountEl.textContent = `x${combo}`;
@@ -229,6 +385,15 @@ function render() {
     renderTrack();
     renderMissions();
     checkAchievements();
+    animateRenderedTiles();
+    if (lastScoreGain > 0) {
+        showScoreGain(lastScoreGain);
+        pulseValue(scoreEl);
+        pulseValue(comboCountEl);
+    }
+    lastScoreGain = 0;
+    lastSpawnIndex = null;
+    pendingRender = "steady";
     if (hasWon() && !paused) {
         showOverlay(`已达成 ${targetTile}`, "可以保存成绩，也可以继续挑战更高分。", false);
     } else if (mode !== "zen" && isGameOver() && !paused) {
@@ -339,6 +504,8 @@ function move(direction) {
         moves += 1;
         saved = false;
         combo = score > scoreBefore ? Math.min(combo + 1, 9) : 1;
+        pendingRender = "move";
+        lastScoreGain = score - scoreBefore;
         addRandomTile();
         playBeep(score > scoreBefore ? 660 : 330, 0.05);
         render();
@@ -399,6 +566,8 @@ function undoMove() {
     autoLeft = previous.autoLeft ?? autoLeft;
     rngState = previous.rngState;
     saved = false;
+    pendingRender = "restore";
+    lastScoreGain = 0;
     overlay.classList.add("hidden");
     render();
     saveProgress();
@@ -430,6 +599,7 @@ function useFocusSkill() {
     moves += 1;
     combo = 1;
     saved = false;
+    pendingRender = "skill";
     render();
     flashIndex(r * boardSize + c);
     saveProgress();
@@ -454,6 +624,8 @@ function useBoostSkill() {
     boostLeft -= 1;
     moves += 1;
     saved = false;
+    pendingRender = "skill";
+    lastScoreGain = board[r][c];
     render();
     flashIndex(r * boardSize + c);
     saveProgress();
@@ -526,6 +698,7 @@ function shuffleBoard() {
     moves += 1;
     combo = 1;
     saved = false;
+    pendingRender = "shuffle";
     render();
     saveProgress();
     hintEl.textContent = `已重新洗牌，还剩 ${shuffleLeft} 次。`;
@@ -1185,7 +1358,15 @@ function activateSideTab(tab) {
         button.classList.toggle("active", button.dataset.tab === tab);
     });
     document.querySelectorAll(".tab-content").forEach((panel) => {
-        panel.classList.toggle("active", panel.dataset.panel === tab);
+        const isActive = panel.dataset.panel === tab;
+        panel.classList.toggle("active", isActive);
+        if (isActive) {
+            const animation = animateElement(panel, [
+                { opacity: 0, transform: "translateY(8px)" },
+                { opacity: 1, transform: "translateY(0)" }
+            ], { duration: 300 });
+            animation?.finished.then(() => animation.cancel()).catch(() => {});
+        }
     });
 }
 
@@ -1207,14 +1388,20 @@ function playBeep(frequency, duration) {
 }
 
 function toggleMusic() {
+    const musicCard = document.querySelector(".music-card");
+    const button = $("playMusicBtn");
     if (musicTimer) {
         window.clearInterval(musicTimer);
         musicTimer = null;
-        $("playMusicBtn").textContent = "播放";
+        button.textContent = "播放";
+        button.setAttribute("aria-pressed", "false");
+        musicCard?.classList.remove("is-playing");
         return;
     }
     ensureAudio();
-    $("playMusicBtn").textContent = "停止";
+    button.textContent = "停止";
+    button.setAttribute("aria-pressed", "true");
+    musicCard?.classList.add("is-playing");
     const tick = () => {
         const track = tracks[currentTrack];
         playBeep(track.base, 0.08);
@@ -1228,6 +1415,11 @@ function setTrack(delta) {
     currentTrack = (currentTrack + delta + tracks.length) % tracks.length;
     trackTitle.textContent = tracks[currentTrack].title;
     trackMood.textContent = tracks[currentTrack].mood;
+    const animation = animateElement(trackTitle, [
+        { opacity: 0, transform: "translateY(6px)" },
+        { opacity: 1, transform: "translateY(0)" }
+    ], { duration: 260 });
+    animation?.finished.then(() => animation.cancel()).catch(() => {});
 }
 
 document.addEventListener("keydown", (event) => {
@@ -1327,6 +1519,7 @@ cloudSaveList?.addEventListener("click", (event) => {
 });
 
 setupTabs();
+setupPageMotion();
 setTrack(0);
 continueGame();
 loadServerStats();
